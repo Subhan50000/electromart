@@ -19,7 +19,7 @@ export default function Register() {
     e.preventDefault()
     setError('')
     if (form.password !== form.password_confirmation) {
-      setError('Passwords match nahi kar rahe!')
+      setError('Passwords do not match.')
       return
     }
     setLoading(true)
@@ -36,7 +36,7 @@ export default function Register() {
         const first = Object.values(errors)[0]
         setError(Array.isArray(first) ? first[0] : first)
       } else {
-        setError('Registration failed. Try again.')
+        setError('Registration failed. Please try again.')
       }
     } finally {
       setLoading(false)
@@ -45,15 +45,12 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
-
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96
                         bg-cyan-500/10 rounded-full blur-3xl"/>
       </div>
 
       <div className="w-full max-w-md relative">
-
-        {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-3">
             <div className="w-10 h-10 bg-cyan-400 rounded-xl flex items-center
@@ -62,30 +59,27 @@ export default function Register() {
               Electro<span className="text-cyan-400">Mart</span>
             </span>
           </div>
-          <p className="text-gray-400 text-sm">Naya account banayein</p>
+          <p className="text-gray-400 text-sm">Create a new account</p>
         </div>
 
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8">
-
-          <h2 className="text-white font-semibold text-xl mb-6">Create Account</h2>
+          <h2 className="text-white font-semibold text-xl mb-6">
+            Create Account
+          </h2>
 
           {error && (
             <div className="bg-red-500/10 border border-red-500/30 text-red-400
-                            text-sm rounded-xl px-4 py-3 mb-5">
-              {error}
-            </div>
+                            text-sm rounded-xl px-4 py-3 mb-5">{error}</div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-
             <div>
-              <label className="text-gray-400 text-sm block mb-1.5">Full Name</label>
+              <label className="text-gray-400 text-sm block mb-1.5">
+                Full Name
+              </label>
               <input
-                type="text"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                placeholder="Apna naam likhein"
+                type="text" name="name" value={form.name}
+                onChange={handleChange} placeholder="Your full name"
                 required
                 className="w-full bg-gray-800 border border-gray-700 text-white
                            rounded-xl px-4 py-3 text-sm outline-none
@@ -95,13 +89,12 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="text-gray-400 text-sm block mb-1.5">Email</label>
+              <label className="text-gray-400 text-sm block mb-1.5">
+                Email Address
+              </label>
               <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="aap@example.com"
+                type="email" name="email" value={form.email}
+                onChange={handleChange} placeholder="you@example.com"
                 required
                 className="w-full bg-gray-800 border border-gray-700 text-white
                            rounded-xl px-4 py-3 text-sm outline-none
@@ -111,13 +104,12 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="text-gray-400 text-sm block mb-1.5">Password</label>
+              <label className="text-gray-400 text-sm block mb-1.5">
+                Password
+              </label>
               <input
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                placeholder="••••••••"
+                type="password" name="password" value={form.password}
+                onChange={handleChange} placeholder="••••••••"
                 required
                 className="w-full bg-gray-800 border border-gray-700 text-white
                            rounded-xl px-4 py-3 text-sm outline-none
@@ -131,11 +123,9 @@ export default function Register() {
                 Confirm Password
               </label>
               <input
-                type="password"
-                name="password_confirmation"
+                type="password" name="password_confirmation"
                 value={form.password_confirmation}
-                onChange={handleChange}
-                placeholder="••••••••"
+                onChange={handleChange} placeholder="••••••••"
                 required
                 className="w-full bg-gray-800 border border-gray-700 text-white
                            rounded-xl px-4 py-3 text-sm outline-none
@@ -145,24 +135,22 @@ export default function Register() {
             </div>
 
             <button
-              type="submit"
-              disabled={loading}
+              type="submit" disabled={loading}
               className="w-full bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50
                          text-gray-950 font-semibold rounded-xl py-3 text-sm
                          transition-all duration-200 mt-2"
             >
-              {loading ? 'Creating account...' : 'Register'}
+              {loading ? 'Creating account...' : 'Create Account'}
             </button>
-
           </form>
 
           <p className="text-gray-500 text-sm text-center mt-6">
-            Pehle se account hai?{' '}
-            <Link to="/login" className="text-cyan-400 hover:text-cyan-300 transition">
-              Login karein
+            Already have an account?{' '}
+            <Link to="/login"
+                  className="text-cyan-400 hover:text-cyan-300 transition">
+              Sign in
             </Link>
           </p>
-
         </div>
       </div>
     </div>
