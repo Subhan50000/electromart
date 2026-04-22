@@ -6,6 +6,9 @@ use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SellerController;
 use App\Http\Controllers\Api\SellerRequestController;
+use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\ReviewController;
 
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -22,35 +25,52 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me',      [AuthController::class, 'me']);
 
-    // Seller request (customer)
+    // Seller request
     Route::post('/seller-request',       [SellerRequestController::class, 'store']);
     Route::get('/seller-request/status', [SellerRequestController::class, 'status']);
+
+    // Cart
+    Route::get('/cart',            [CartController::class, 'index']);
+    Route::post('/cart',           [CartController::class, 'add']);
+    Route::put('/cart/{id}',       [CartController::class, 'update']);
+    Route::delete('/cart/{id}',    [CartController::class, 'remove']);
+    Route::delete('/cart',         [CartController::class, 'clear']);
+    Route::get('/cart/count',      [CartController::class, 'count']);
+
+    // Orders
+    Route::post('/orders',         [OrderController::class, 'store']);
+    Route::get('/orders',          [OrderController::class, 'index']);
+    Route::get('/orders/{id}',     [OrderController::class, 'show']);
+
+    // Reviews
+    Route::post('/reviews',        [ReviewController::class, 'store']);
 
     // Seller routes
     Route::middleware('App\Http\Middleware\SellerMiddleware')
         ->prefix('seller')
         ->group(function () {
-            Route::get('/stats',                          [SellerController::class, 'stats']);
-            Route::get('/products',                       [SellerController::class, 'products']);
-            Route::post('/products',                      [SellerController::class, 'createProduct']);
-            Route::post('/products/{id}',                 [SellerController::class, 'updateProduct']);
-            Route::delete('/products/{id}',               [SellerController::class, 'deleteProduct']);
-            Route::delete('/images/{imageId}',            [SellerController::class, 'deleteImage']);
-            Route::get('/shipments',                      [SellerController::class, 'shipments']);
-            Route::put('/orders/{itemId}/status',         [SellerController::class, 'updateOrderStatus']);
-            Route::get('/order-history',                  [SellerController::class, 'orderHistory']);
+            Route::get('/stats',                  [SellerController::class, 'stats']);
+            Route::get('/products',               [SellerController::class, 'products']);
+            Route::post('/products',              [SellerController::class, 'createProduct']);
+            Route::post('/products/{id}',         [SellerController::class, 'updateProduct']);
+            Route::delete('/products/{id}',       [SellerController::class, 'deleteProduct']);
+            Route::delete('/images/{imageId}',    [SellerController::class, 'deleteImage']);
+            Route::get('/shipments',              [SellerController::class, 'shipments']);
+            Route::put('/orders/{itemId}/status', [SellerController::class, 'updateOrderStatus']);
+            Route::get('/order-history',          [SellerController::class, 'orderHistory']);
+            Route::get('/reviews', [SellerController::class, 'reviews']);
         });
 
     // Admin routes
     Route::middleware('App\Http\Middleware\AdminMiddleware')
         ->prefix('admin')
         ->group(function () {
-            Route::get('/stats',                          [AdminController::class, 'stats']);
-            Route::get('/customers',                      [AdminController::class, 'customers']);
-            Route::get('/sellers',                        [AdminController::class, 'sellers']);
-            Route::get('/seller-requests',                [AdminController::class, 'sellerRequests']);
-            Route::post('/seller-requests/{id}/accept',   [AdminController::class, 'acceptSellerRequest']);
-            Route::post('/seller-requests/{id}/decline',  [AdminController::class, 'declineSellerRequest']);
-            Route::delete('/users/{id}',                  [AdminController::class, 'deleteUser']);
+            Route::get('/stats',                         [AdminController::class, 'stats']);
+            Route::get('/customers',                     [AdminController::class, 'customers']);
+            Route::get('/sellers',                       [AdminController::class, 'sellers']);
+            Route::get('/seller-requests',               [AdminController::class, 'sellerRequests']);
+            Route::post('/seller-requests/{id}/accept',  [AdminController::class, 'acceptSellerRequest']);
+            Route::post('/seller-requests/{id}/decline', [AdminController::class, 'declineSellerRequest']);
+            Route::delete('/users/{id}',                 [AdminController::class, 'deleteUser']);
         });
 });

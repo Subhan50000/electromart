@@ -204,5 +204,20 @@ class SellerController extends Controller
             ->get();
 
         return response()->json($items);
+
     }
+    
+    public function reviews(Request $request)
+{
+    $sellerId = $request->user()->id;
+
+    $reviews = Review::with(['product', 'user'])
+        ->whereHas('product', function ($q) use ($sellerId) {
+            $q->where('seller_id', $sellerId);
+        })
+        ->latest()
+        ->get();
+
+    return response()->json($reviews);
+}
 }

@@ -1,110 +1,115 @@
-import { useEffect, useState } from 'react'
-import SellerLayout from '../../components/seller/SellerLayout'
-import api from '../../api/axios'
+import { useEffect, useState } from "react";
+import SellerLayout from "../../components/seller/SellerLayout";
+import api from "../../api/axios";
 
 const emptyForm = {
-  name: '', description: '', price: '',
-  stock: '', category_id: '', images: [],
-}
+  name: "",
+  description: "",
+  price: "",
+  stock: "",
+  category_id: "",
+  images: [],
+};
 
 export default function SellerProducts() {
-  const [products, setProducts]     = useState([])
-  const [categories, setCategories] = useState([])
-  const [loading, setLoading]       = useState(true)
-  const [showModal, setShowModal]   = useState(false)
-  const [editProduct, setEditProduct] = useState(null)
-  const [form, setForm]             = useState(emptyForm)
-  const [submitting, setSubmitting] = useState(false)
-  const [error, setError]           = useState('')
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [editProduct, setEditProduct] = useState(null);
+  const [form, setForm] = useState(emptyForm);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchProducts()
-    api.get('/categories').then(res => setCategories(res.data))
-  }, [])
+    fetchProducts();
+    api.get("/categories").then((res) => setCategories(res.data));
+  }, []);
 
   const fetchProducts = () => {
-    setLoading(true)
-    api.get('/seller/products')
-      .then(res => setProducts(res.data))
-      .finally(() => setLoading(false))
-  }
+    setLoading(true);
+    api
+      .get("/seller/products")
+      .then((res) => setProducts(res.data))
+      .finally(() => setLoading(false));
+  };
 
   const openCreate = () => {
-    setEditProduct(null)
-    setForm(emptyForm)
-    setError('')
-    setShowModal(true)
-  }
+    setEditProduct(null);
+    setForm(emptyForm);
+    setError("");
+    setShowModal(true);
+  };
 
   const openEdit = (product) => {
-    setEditProduct(product)
+    setEditProduct(product);
     setForm({
-      name:        product.name,
+      name: product.name,
       description: product.description,
-      price:       product.price,
-      stock:       product.stock,
+      price: product.price,
+      stock: product.stock,
       category_id: product.category_id,
-      images:      [],
-    })
-    setError('')
-    setShowModal(true)
-  }
+      images: [],
+    });
+    setError("");
+    setShowModal(true);
+  };
 
-  const handleChange = e =>
-    setForm({ ...form, [e.target.name]: e.target.value })
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleImages = e =>
-    setForm({ ...form, images: Array.from(e.target.files) })
+  const handleImages = (e) =>
+    setForm({ ...form, images: Array.from(e.target.files) });
 
-  const handleSubmit = async e => {
-    e.preventDefault()
-    setError('')
-    setSubmitting(true)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSubmitting(true);
 
     try {
-      const data = new FormData()
-      data.append('name',        form.name)
-      data.append('description', form.description)
-      data.append('price',       form.price)
-      data.append('stock',       form.stock)
-      data.append('category_id', form.category_id)
-      form.images.forEach(img => data.append('images[]', img))
+      const data = new FormData();
+      data.append("name", form.name);
+      data.append("description", form.description);
+      data.append("price", form.price);
+      data.append("stock", form.stock);
+      data.append("category_id", form.category_id);
+      form.images.forEach((img) => data.append("images[]", img));
 
       if (editProduct) {
         await api.post(`/seller/products/${editProduct.id}`, data, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        })
+          headers: { "Content-Type": "multipart/form-data" },
+        });
       } else {
-        await api.post('/seller/products', data, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        })
+        await api.post("/seller/products", data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
       }
 
-      setShowModal(false)
-      fetchProducts()
+      setShowModal(false);
+      fetchProducts();
     } catch (err) {
-      const errors = err.response?.data?.errors
+      const errors = err.response?.data?.errors;
       if (errors) {
-        setError(Object.values(errors).flat().join(', '))
+        setError(Object.values(errors).flat().join(", "));
       } else {
-        setError(err.response?.data?.message || 'Something went wrong.')
+        setError(err.response?.data?.message || "Something went wrong.");
       }
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
   const handleDelete = async (id) => {
-    if (!confirm('Delete this product?')) return
-    await api.delete(`/seller/products/${id}`)
-    fetchProducts()
-  }
+    if (!confirm("Delete this product?")) return;
+    await api.delete(`/seller/products/${id}`);
+    fetchProducts();
+  };
 
   const handleDeleteImage = async (imageId) => {
-    if (!confirm('Delete this image?')) return
-    await api.delete(`/seller/images/${imageId}`)
-    fetchProducts()
-  }
+    if (!confirm("Delete this image?")) return;
+    await api.delete(`/seller/images/${imageId}`);
+    fetchProducts();
+  };
 
   return (
     <SellerLayout>
@@ -119,7 +124,7 @@ export default function SellerProducts() {
         <button
           onClick={openCreate}
           className="bg-cyan-400 hover:bg-cyan-300 text-gray-950 font-semibold
-                     text-sm px-5 py-2.5 rounded-xl transition"
+          text-sm px-5 py-2.5 rounded-xl transition"
         >
           + Add Product
         </button>
@@ -128,12 +133,16 @@ export default function SellerProducts() {
       {/* Products Grid */}
       {loading ? (
         <div className="flex items-center justify-center h-48">
-          <div className="w-8 h-8 border-2 border-cyan-400
-                          border-t-transparent rounded-full animate-spin"/>
+          <div
+            className="w-8 h-8 border-2 border-cyan-400
+            border-t-transparent rounded-full animate-spin"
+          />
         </div>
       ) : products.length === 0 ? (
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl
-                        p-12 text-center">
+        <div
+          className="bg-gray-900 border border-gray-800 rounded-2xl
+                        p-12 text-center"
+        >
           <p className="text-5xl mb-4">📦</p>
           <p className="text-gray-400 mb-4">No products yet</p>
           <button
@@ -146,13 +155,17 @@ export default function SellerProducts() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map(product => (
-            <div key={product.id}
-                 className="bg-gray-900 border border-gray-800 rounded-2xl
-                            overflow-hidden">
+          {products.map((product) => (
+            <div
+              key={product.id}
+              className="bg-gray-900 border border-gray-800 rounded-2xl
+              overflow-hidden"
+            >
               {/* Image */}
-              <div className="h-40 bg-gray-800 flex items-center justify-center
-                              overflow-hidden">
+              <div
+                className="h-40 bg-gray-800 flex items-center justify-center
+                overflow-hidden"
+              >
                 {product.images?.[0] ? (
                   <img
                     src={`http://localhost:8000/storage/${product.images[0].image_path}`}
@@ -184,12 +197,12 @@ export default function SellerProducts() {
                 {/* Images Row */}
                 {product.images?.length > 0 && (
                   <div className="flex gap-2 mt-3 flex-wrap">
-                    {product.images.map(img => (
+                    {product.images.map((img) => (
                       <div key={img.id} className="relative group">
                         <img
                           src={`http://localhost:8000/storage/${img.image_path}`}
                           className="w-10 h-10 rounded-lg object-cover
-                                     border border-gray-700"
+                          border border-gray-700"
                           alt=""
                         />
                         <button
@@ -232,14 +245,17 @@ export default function SellerProducts() {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-center
-                        justify-center z-50 p-4">
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl
-                          w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6
-                            border-b border-gray-800">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div
+            className="bg-gray-900 border border-gray-800 rounded-2xl
+                          w-full max-w-lg max-h-[90vh] overflow-y-auto"
+          >
+            <div
+              className="flex items-center justify-between p-6
+                            border-b border-gray-800"
+            >
               <h2 className="text-white font-semibold text-lg">
-                {editProduct ? 'Edit Product' : 'Add New Product'}
+                {editProduct ? "Edit Product" : "Add New Product"}
               </h2>
               <button
                 onClick={() => setShowModal(false)}
@@ -251,8 +267,10 @@ export default function SellerProducts() {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {error && (
-                <div className="bg-red-500/10 border border-red-500/30
-                                text-red-400 text-sm rounded-xl px-4 py-3">
+                <div
+                  className="bg-red-500/10 border border-red-500/30
+                                text-red-400 text-sm rounded-xl px-4 py-3"
+                >
                   {error}
                 </div>
               )}
@@ -262,8 +280,10 @@ export default function SellerProducts() {
                   Product Name
                 </label>
                 <input
-                  name="name" value={form.name}
-                  onChange={handleChange} required
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  required
                   placeholder="e.g. Samsung Galaxy S24"
                   className="w-full bg-gray-800 border border-gray-700
                              text-white rounded-xl px-4 py-3 text-sm
@@ -277,8 +297,11 @@ export default function SellerProducts() {
                   Description
                 </label>
                 <textarea
-                  name="description" value={form.description}
-                  onChange={handleChange} required rows={3}
+                  name="description"
+                  value={form.description}
+                  onChange={handleChange}
+                  required
+                  rows={3}
                   placeholder="Describe your product..."
                   className="w-full bg-gray-800 border border-gray-700
                              text-white rounded-xl px-4 py-3 text-sm
@@ -293,8 +316,12 @@ export default function SellerProducts() {
                     Price (Rs.)
                   </label>
                   <input
-                    type="number" name="price" value={form.price}
-                    onChange={handleChange} required min="0"
+                    type="number"
+                    name="price"
+                    value={form.price}
+                    onChange={handleChange}
+                    required
+                    min="0"
                     placeholder="0"
                     className="w-full bg-gray-800 border border-gray-700
                                text-white rounded-xl px-4 py-3 text-sm
@@ -307,8 +334,12 @@ export default function SellerProducts() {
                     Stock
                   </label>
                   <input
-                    type="number" name="stock" value={form.stock}
-                    onChange={handleChange} required min="0"
+                    type="number"
+                    name="stock"
+                    value={form.stock}
+                    onChange={handleChange}
+                    required
+                    min="0"
                     placeholder="0"
                     className="w-full bg-gray-800 border border-gray-700
                                text-white rounded-xl px-4 py-3 text-sm
@@ -323,14 +354,16 @@ export default function SellerProducts() {
                   Category
                 </label>
                 <select
-                  name="category_id" value={form.category_id}
-                  onChange={handleChange} required
+                  name="category_id"
+                  value={form.category_id}
+                  onChange={handleChange}
+                  required
                   className="w-full bg-gray-800 border border-gray-700
                              text-white rounded-xl px-4 py-3 text-sm
                              outline-none focus:border-cyan-500"
                 >
                   <option value="">Select category</option>
-                  {categories.map(cat => (
+                  {categories.map((cat) => (
                     <option key={cat.id} value={cat.id}>
                       {cat.icon} {cat.name}
                     </option>
@@ -343,7 +376,9 @@ export default function SellerProducts() {
                   Product Images
                 </label>
                 <input
-                  type="file" multiple accept="image/*"
+                  type="file"
+                  multiple
+                  accept="image/*"
                   onChange={handleImages}
                   className="w-full bg-gray-800 border border-gray-700
                              text-gray-400 rounded-xl px-4 py-3 text-sm
@@ -362,22 +397,25 @@ export default function SellerProducts() {
 
               <div className="flex gap-3 pt-2">
                 <button
-                  type="button" onClick={() => setShowModal(false)}
+                  type="button"
+                  onClick={() => setShowModal(false)}
                   className="flex-1 bg-gray-800 hover:bg-gray-700 text-white
                              py-3 rounded-xl text-sm transition"
                 >
                   Cancel
                 </button>
                 <button
-                  type="submit" disabled={submitting}
+                  type="submit"
+                  disabled={submitting}
                   className="flex-1 bg-cyan-400 hover:bg-cyan-300
                              disabled:opacity-50 text-gray-950 font-semibold
                              py-3 rounded-xl text-sm transition"
                 >
                   {submitting
-                    ? 'Saving...'
-                    : editProduct ? 'Update Product' : 'Add Product'
-                  }
+                    ? "Saving..."
+                    : editProduct
+                      ? "Update Product"
+                      : "Add Product"}
                 </button>
               </div>
             </form>
@@ -385,5 +423,5 @@ export default function SellerProducts() {
         </div>
       )}
     </SellerLayout>
-  )
+  );
 }

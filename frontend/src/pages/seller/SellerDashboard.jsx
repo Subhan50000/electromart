@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
-import SellerLayout from '../../components/seller/SellerLayout'
-import api from '../../api/axios'
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import SellerLayout from "../../components/seller/SellerLayout";
+import api from "../../api/axios";
 
 const StatCard = ({ label, value, color, icon }) => (
   <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
@@ -8,33 +9,42 @@ const StatCard = ({ label, value, color, icon }) => (
       <span className="text-gray-400 text-sm">{label}</span>
       <span className="text-2xl">{icon}</span>
     </div>
-    <p className={`text-3xl font-bold ${color}`}>{value ?? '...'}</p>
+    <p className={`text-3xl font-bold ${color}`}>{value ?? "..."}</p>
   </div>
-)
+);
 
 export default function SellerDashboard() {
-  const [stats, setStats]     = useState(null)
-  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate();
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/seller/stats')
-      .then(res => setStats(res.data))
-      .finally(() => setLoading(false))
-  }, [])
+    api
+      .get("/seller/stats")
+      .then((res) => setStats(res.data))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <SellerLayout>
       <div className="mb-8">
         <h1 className="text-white text-2xl font-bold">Dashboard</h1>
-        <p className="text-gray-400 text-sm mt-1">
-          Your store overview
-        </p>
+        <p className="text-gray-400 text-sm mt-1">Your store overview</p>
+      </div>
+
+      <div className="mb-6">
+        <button
+          onClick={() => navigate("/seller/reviews")}
+          className="bg-cyan-400 hover:bg-cyan-300 text-gray-950
+                     font-medium px-4 py-2 rounded-xl transition"
+        >
+          View All Reviews
+        </button>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center h-48">
-          <div className="w-8 h-8 border-2 border-cyan-400
-                          border-t-transparent rounded-full animate-spin"/>
+          <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <>
@@ -42,17 +52,20 @@ export default function SellerDashboard() {
             <StatCard
               label="Total Products"
               value={stats?.total_products}
-              color="text-cyan-400" icon="📦"
+              color="text-cyan-400"
+              icon="📦"
             />
             <StatCard
               label="Total Orders"
               value={stats?.total_orders}
-              color="text-purple-400" icon="🛒"
+              color="text-purple-400"
+              icon="🛒"
             />
             <StatCard
               label="Total Revenue"
               value={`Rs. ${Number(stats?.total_revenue || 0).toLocaleString()}`}
-              color="text-emerald-400" icon="💰"
+              color="text-emerald-400"
+              icon="💰"
             />
           </div>
 
@@ -60,17 +73,20 @@ export default function SellerDashboard() {
             <StatCard
               label="Pending Orders"
               value={stats?.pending}
-              color="text-yellow-400" icon="⏳"
+              color="text-yellow-400"
+              icon="⏳"
             />
             <StatCard
               label="Delivered"
               value={stats?.delivered}
-              color="text-green-400" icon="✅"
+              color="text-green-400"
+              icon="✅"
             />
             <StatCard
               label="Cancelled"
               value={stats?.cancelled}
-              color="text-red-400" icon="❌"
+              color="text-red-400"
+              icon="❌"
             />
           </div>
 
@@ -78,11 +94,12 @@ export default function SellerDashboard() {
             <StatCard
               label="Total Reviews"
               value={stats?.total_reviews}
-              color="text-yellow-400" icon="⭐"
+              color="text-yellow-400"
+              icon="⭐"
             />
           </div>
         </>
       )}
     </SellerLayout>
-  )
+  );
 }

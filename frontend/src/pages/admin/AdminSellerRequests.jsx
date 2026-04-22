@@ -46,17 +46,24 @@ export default function AdminSellerRequests() {
         <div className="space-y-4">
           {requests.map(req => (
             <div key={req.id}
-                 className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-              <div className="flex items-start justify-between">
+                 className="bg-gray-900 border border-gray-800 rounded-2xl p-4 sm:p-6">
+
+              {/* Top: Avatar + Info + Buttons */}
+              <div className="flex flex-col sm:flex-row sm:items-start
+                              sm:justify-between gap-4">
+
+                {/* Left: Avatar + Details */}
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-yellow-400/10 text-yellow-400
                                   rounded-full flex items-center justify-center
-                                  font-medium">
+                                  font-medium flex-shrink-0">
                     {req.user?.name?.charAt(0).toUpperCase()}
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h3 className="text-white font-medium">{req.user?.name}</h3>
-                    <p className="text-gray-400 text-sm">{req.user?.email}</p>
+                    <p className="text-gray-400 text-sm break-all">
+                      {req.user?.email}
+                    </p>
                     <div className="mt-3 space-y-1">
                       <p className="text-sm">
                         <span className="text-gray-500">Shop Name: </span>
@@ -79,20 +86,25 @@ export default function AdminSellerRequests() {
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-3">
+
+                {/* Buttons */}
+                <div className="flex gap-3 sm:flex-col sm:items-end
+                                flex-row flex-wrap">
                   <button
                     onClick={() => handleAccept(req.id)}
-                    className="bg-green-400/10 text-green-400 hover:bg-green-400
-                               hover:text-gray-950 px-4 py-2 rounded-xl text-sm
-                               font-medium transition-all duration-200"
+                    className="flex-1 sm:flex-none bg-green-400/10 text-green-400
+                               hover:bg-green-400 hover:text-gray-950 px-4 py-2
+                               rounded-xl text-sm font-medium
+                               transition-all duration-200 text-center"
                   >
                     ✓ Accept
                   </button>
                   <button
                     onClick={() => handleDecline(req.id)}
-                    className="bg-red-400/10 text-red-400 hover:bg-red-400
-                               hover:text-white px-4 py-2 rounded-xl text-sm
-                               font-medium transition-all duration-200"
+                    className="flex-1 sm:flex-none bg-red-400/10 text-red-400
+                               hover:bg-red-400 hover:text-white px-4 py-2
+                               rounded-xl text-sm font-medium
+                               transition-all duration-200 text-center"
                   >
                     ✕ Decline
                   </button>
